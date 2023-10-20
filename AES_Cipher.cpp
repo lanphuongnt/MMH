@@ -110,7 +110,9 @@ AES_Cipher::AES_Cipher(string aMode){
 }
 
 string AES_Cipher::encrypt(string plain){
-    #ifdef _WIN32
+    #ifdef __linux__
+    setlocale(LC_ALL, "");
+    #elif _WIN32
     _setmode(_fileno(stdin), _O_U16TEXT);
     _setmode(_fileno(stdout), _O_U16TEXT);
     #endif
@@ -164,7 +166,9 @@ string AES_Cipher::encrypt(string plain){
     return cipher;
 }
 string AES_Cipher::decrypt(string cipher){
-    #ifdef _WIN32
+    #ifdef __linux__
+    setlocale(LC_ALL, "");
+    #elif _WIN32
     _setmode(_fileno(stdin), _O_U16TEXT);
     _setmode(_fileno(stdout), _O_U16TEXT);
     #endif

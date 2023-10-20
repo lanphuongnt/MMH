@@ -12,7 +12,9 @@ using namespace std;
 #endif
 
 int main(){
-    #ifdef _WIN32
+    #ifdef __linux__
+    setlocale(LC_ALL, "");
+    #elif _WIN32
     _setmode(_fileno(stdin), _O_U16TEXT);
     _setmode(_fileno(stdout), _O_U16TEXT);
     #endif

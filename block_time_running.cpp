@@ -24,7 +24,9 @@ using namespace std;
 #endif
 
 void block_time_running(){
-    #ifdef _WIN32
+    #ifdef __linux__
+    setlocale(LC_ALL, "");
+    #elif _WIN32
     _setmode(_fileno(stdin), _O_U16TEXT);
     _setmode(_fileno(stdout), _O_U16TEXT);
     #endif
@@ -42,8 +44,10 @@ void block_time_running(){
               << "3. Decryption\n"
               << "4. Exit\n"
               << "Please enter your number (1/2/3/4)?\n> ";
-        wcin >> aescipher;
+        #ifdef _WIN32
         wcin.ignore();
+        #endif
+        aescipher = getInt();
         switch (aescipher) {
             case 1: {
                 aes = new AES_Cipher(mode);
@@ -58,7 +62,9 @@ void block_time_running(){
                     goto WARNING1;
                 }
                 wcout << "Enter the file name which contains plaintext:\n> ";
+                #ifdef _WIN32
                 wcin.ignore();
+                #endif
                 getline(wcin, filename);
                 plaintext = getDataFromFile(filename);
                 auto start = chrono::high_resolution_clock::now();
@@ -74,7 +80,7 @@ void block_time_running(){
                 wcout << "Length of plaintext : " << plaintext.size() << '\n';
                 wcout << "Length of ciphertext : " << ciphertext.size() << '\n';
                 wcout << "Average time for encryption over 1000 rounds of plaintext in file " << filename << " : " << averageTime << " ms" << endl;
-                outputSelection(ciphertext, false, true);
+                // outputSelection(ciphertext, false, true);
                 break;
             }
             case 3: {

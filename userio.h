@@ -61,4 +61,6 @@ string selectEncryptOrDecrypt();
 void modeSelection(string &mode);
 int inputWaySelection();
 
+int getInt();
+
 #endif

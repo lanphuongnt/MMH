@@ -70,7 +70,9 @@ using namespace CryptoPP;
 #include "convert.h"
 
 string getDataFromFile(wstring filename){
-    #ifdef _WIN32
+    #ifdef __linux__
+    setlocale(LC_ALL, "");
+    #elif _WIN32
     _setmode(_fileno(stdin), _O_U16TEXT);
     _setmode(_fileno(stdout), _O_U16TEXT);
     #endif
@@ -100,7 +102,9 @@ CryptoPP::byte *generateBlock(unsigned int blockSize, int genSelection, string n
         case 2: {
             wstring wstr;
             wcout << "Enter your " << string_to_wstring(nameOfBlock) << " (hex - " << blockSize << " bytes):\n> ";
+            #ifdef _WIN32
             wcin.ignore();
+            #endif
             getline(wcin, wstr);
             str = wstring_to_string(wstr);
             
@@ -112,7 +116,9 @@ CryptoPP::byte *generateBlock(unsigned int blockSize, int genSelection, string n
             ifstream file;
 
             wcout << ">>> Enter your filename which contains " << string_to_wstring(nameOfBlock) << " (hex - " << blockSize << " bytes):\n> ";
+            #ifdef _WIN32
             wcin.ignore();
+            #endif
             getline(wcin, filename);
             fn = wstring_to_string(filename);
             try {
@@ -122,6 +128,7 @@ CryptoPP::byte *generateBlock(unsigned int blockSize, int genSelection, string n
                 wcerr << e.what() << endl;
                 exit(1);
             }
+            // getline cua file
             getline(file, str);
             file.close();
             break;
@@ -150,24 +157,31 @@ CryptoPP::byte *generateBlock(unsigned int blockSize, int genSelection, string n
 }
 
 void inputPlaintextSelection(string &plaintext){
-    #ifdef _WIN32
+    #ifdef __linux__
+    setlocale(LC_ALL, "");
+    #elif _WIN32
     _setmode(_fileno(stdin), _O_U16TEXT);
     _setmode(_fileno(stdout), _O_U16TEXT);
     #endif
     int userSelection;
-    wstring wtext;
+    wstring wtext, input;
 
     wcout << ">>> Where would you like to get your plaintext from?\n"
           << "1. From screen\n"
           << "2. From file\n"
           << "Please enter your number (1/2)?\n> ";
 
-    wcin >> userSelection;
+    #ifdef _WIN32
     wcin.ignore();
+    #endif
+    userSelection = getInt();
+
     switch (userSelection) {
         case 1: {
             wcout << ">>> Enter your plaintext (characters):\n> ";
+            #ifdef _WIN32
             wcin.ignore();
+            #endif
             getline(wcin, wtext);
             plaintext = wstring_to_string(wtext);
             break;
@@ -175,7 +189,9 @@ void inputPlaintextSelection(string &plaintext){
         case 2: {
             wstring filename;
             wcout << ">>> Enter your filename:\n> ";
+            #ifdef _WIN32
             wcin.ignore();
+            #endif
             getline(wcin, filename);
             plaintext = getDataFromFile(filename);
             break;
@@ -188,7 +204,9 @@ void inputPlaintextSelection(string &plaintext){
 }
 
 string inputCiphertextSelection(){
-    #ifdef _WIN32
+    #ifdef __linux__
+    setlocale(LC_ALL, "");
+    #elif _WIN32
     _setmode(_fileno(stdin), _O_U16TEXT);
     _setmode(_fileno(stdout), _O_U16TEXT);
     #endif
@@ -202,21 +220,28 @@ string inputCiphertextSelection(){
           << "2. Hex\n"
           << "3. Base64\n"
           << "Please enter your number (1/2/3)?\n> ";
-    
-    wcin >> performSelection;
+    #ifdef _WIN32
     wcin.ignore();
+    #endif
+    performSelection = getInt();
+
 
     wcout << ">>> Where would you like to get your ciphertext from?\n"
           << "1. From screen\n"
           << "2. From file\n"
           << "Please enter your number (1/2)?\n> ";
 
-    wcin >> userSelection;
+    #ifdef _WIN32
     wcin.ignore();
+    #endif
+    userSelection = getInt();
+
     switch (userSelection) {
         case 1: {
             wcout << ">>> Enter your ciphertext:\n> ";
+            #ifdef _WIN32
             wcin.ignore();
+            #endif
             getline(wcin, wtext);
             encoded = wstring_to_string(wtext);
             break;
@@ -224,7 +249,9 @@ string inputCiphertextSelection(){
         case 2: {
             wstring filename;
             wcout << ">>> Enter your filename:\n> ";
+            #ifdef _WIN32
             wcin.ignore();
+            #endif
             getline(wcin, filename);
             encoded = getDataFromFile(filename);
             break;
@@ -248,7 +275,7 @@ string inputCiphertextSelection(){
         cipher = base64decode(encoded);
         break;
     default:
-        wcout << "Invalid input!";
+        wcout << "Invalid input!\n";
         exit(0);
         break;
     }
@@ -256,7 +283,9 @@ string inputCiphertextSelection(){
 }
 
 void outputSelection(string text, bool plaintext, bool ciphertext){
-    #ifdef _WIN32
+    #ifdef __linux__
+    setlocale(LC_ALL, "");
+    #elif _WIN32
     _setmode(_fileno(stdin), _O_U16TEXT);
     _setmode(_fileno(stdout), _O_U16TEXT);
     #endif
@@ -268,8 +297,11 @@ void outputSelection(string text, bool plaintext, bool ciphertext){
           << "3. Base64\n"
           << "Please enter your number (1/2/3)?\n> ";
     
-    wcin >> userSelection;
+    #ifdef _WIN32
     wcin.ignore();
+    #endif
+    userSelection = getInt();
+
     
     encoded.clear();
     switch (userSelection)
@@ -284,7 +316,7 @@ void outputSelection(string text, bool plaintext, bool ciphertext){
         encoded = base64encode(text);
         break;
     default:
-        wcout << "Invalid input!";
+        wcout << "Invalid input!\n";
         exit(0);
         break;
     }
@@ -293,8 +325,11 @@ void outputSelection(string text, bool plaintext, bool ciphertext){
           << "1. Display in screen\n"
           << "2. Write to file\n"
           << "Please enter your number (1/2)?\n> ";
-    wcin >> userSelection;
+    #ifdef _WIN32
     wcin.ignore();
+    #endif
+    userSelection = getInt();
+
 
     switch (userSelection) {
         case 1: {
@@ -311,7 +346,9 @@ void outputSelection(string text, bool plaintext, bool ciphertext){
             ofstream file;
 
             wcout << ">>> Enter your filename:\n> ";
+            #ifdef _WIN32
             wcin.ignore();
+            #endif
             getline(wcin, filename);
             fn = wstring_to_string(filename);
             try {
@@ -339,8 +376,11 @@ string selectEncryptOrDecrypt(){
           << "1. Encrypt\n"
           << "2. Decrypt\n"
           << "Please enter your number (1/2):\n> ";
-    wcin >> userSelection;
+    #ifdef _WIN32
     wcin.ignore();
+    #endif
+    userSelection = getInt();
+
     switch (userSelection)
     {
     case 1:
@@ -349,13 +389,13 @@ string selectEncryptOrDecrypt(){
     case 2:
         return "decrypt";
     default:
-        wcout << "Invalid input!";
+        wcout << "Invalid input!\n";
         exit(0);
         break;
     }
 }
 
-void modeSelection(string &mode){
+void modeSelection(string &mode){ 
     int userSelection;
     wcout << "Select AES mode:\n"
           << "1. ECB\n"
@@ -367,9 +407,8 @@ void modeSelection(string &mode){
           << "7. CCM\n"
           << "8. GCM\n"
           << "Please enter your number (1/2/3/4/5/6/7/8):\n> ";
-    
-    wcin >> userSelection;
-    wcin.ignore();
+    // Goi dau tien nen khong can ignore
+    userSelection = getInt();
     switch (userSelection) {
         case 1: 
             mode = "ECB";
@@ -396,7 +435,8 @@ void modeSelection(string &mode){
             mode = "GCM";
             break;
         default:
-            wcout << "Invalid input!";
+            wcout << "Invalid input!\n";
+            exit(0);
             break;
     }
 }
@@ -408,8 +448,24 @@ int inputWaySelection(){
           << "2. Input from screen\n"
           << "3. Input from file\n"
           << "Please enter your number (1/2/3)?\n> ";
-
-    wcin >> userSelection;
-    wcin.ignore();   
+    #ifdef _WIN32
+    wcin.ignore();
+    #endif
+    userSelection = getInt();
     return userSelection;
+}
+
+int getInt(){
+    wstring inp;
+    int res = -1;
+    // Da ignore truoc khi goi ham
+    getline(wcin, inp); 
+    try {
+        res = stoi(inp);
+    }
+    catch (const invalid_argument& e) {
+        goto RETURN;
+    }
+    RETURN:
+    return res;
 }
